@@ -2,7 +2,7 @@
 CONFIG = {
     "APP": {
         "TITLE": "Portal for Role Integration, Security & Management",
-        "LOGO_URL": "NTT-Data-Logo.png"
+        "LOGO_URL": "assets/NTT-Data-Logo.png"
     },
     "DATABASE": {
         "NAME": "SECURITY",  # Change this for your environment

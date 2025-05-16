@@ -1,18 +1,23 @@
+"""
+Main application file for PRISM.
+"""
+
 import streamlit as st
-from snowflake.snowpark.context import get_active_session
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-from datetime import datetime, timedelta
-from config.config import *
-from utils.helpers import *
+from config.config import APP_CONFIG, ACTIONS
+from utils.snowflake_utils import (
+    get_current_snowflake_user,
+    get_current_snowflake_role
+)
 
-# Set page configuration
-st.set_page_config(page_title=CONFIG["APP"]["TITLE"], layout="wide")
-
-# Main function
 def main():
-    # Set page configuration and styling
+    # Set page configuration
+    st.set_page_config(
+        page_title=APP_CONFIG["APP"]["TITLE"],
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+
+    # Custom CSS for dark/light mode
     st.markdown("""
         <style>
         /* Light mode styles */
@@ -102,8 +107,8 @@ def main():
     
     # Sidebar
     with st.sidebar:
-        st.image(CONFIG["APP"]["LOGO_URL"], width=500)
-        st.image("assets/Prism Designer.jpeg", width=500)
+        st.image(APP_CONFIG["APP"]["LOGO_URL"], width=500)
+        st.image("Prism Designer.jpeg", width=500)
         
         # Account Context
         st.markdown("### Account Context")
@@ -139,7 +144,7 @@ def main():
         st.markdown("### Actions")
         selected_action = st.radio(
             "",
-            ACTIONS_LIST,
+            list(ACTIONS.values()),
             key="selected_action_radio"
         )
        
@@ -162,57 +167,42 @@ def main():
                 st.text("Kalyan Aravapalli")
 
     # Main content area
-    st.title(CONFIG["APP"]["TITLE"])
+    st.title(APP_CONFIG["APP"]["TITLE"])
     st.markdown("---")
    
     # Action Dispatcher
-    if selected_action == ABOUT:
-        from pages.about import ui_about
-        ui_about()
-    elif selected_action == CREATE_DATABASE:
-        from pages.database import ui_create_database
-        ui_create_database()
-    elif selected_action == CLONE_DATABASE:
-        from pages.database import ui_clone_database
-        ui_clone_database()
-    elif selected_action == DELETE_DATABASE:
-        from pages.database import ui_delete_database
-        ui_delete_database()
-    elif selected_action == CREATE_WAREHOUSE:
-        from pages.warehouse import ui_create_warehouse
-        ui_create_warehouse()
-    elif selected_action == CREATE_ROLE:
-        from pages.roles import ui_create_role
-        ui_create_role()
-    elif selected_action == ASSIGN_ROLES:
-        from pages.roles import ui_assign_roles
-        ui_assign_roles()
-    elif selected_action == ASSIGN_DATABASE_ROLES:
-        from pages.roles import ui_assign_database_roles
-        ui_assign_database_roles()
-    elif selected_action == REVOKE_ROLES:
-        from pages.roles import ui_revoke_roles
-        ui_revoke_roles()
-    elif selected_action == CREATE_ENVIRONMENT_ROLES:
-        from pages.roles import ui_create_environment_roles
-        ui_create_environment_roles()
-    elif selected_action == SHOW_ROLE_HIERARCHY:
-        from pages.roles import ui_show_role_hierarchy
-        ui_show_role_hierarchy()
-    elif selected_action == DISPLAY_RBAC_ARCHITECTURE:
-        from pages.roles import ui_display_rbac_architecture
-        ui_display_rbac_architecture()
-    elif selected_action == MANAGE_METADATA:
-        from pages.metadata import ui_manage_metadata
-        ui_manage_metadata()
-    elif selected_action == COST_ANALYSIS:
-        from pages.cost import ui_cost_analysis
-        ui_cost_analysis()
-    elif selected_action == AUDIT_LOGS:
-        from pages.audit import ui_audit_logs
-        ui_audit_logs()
+    if selected_action == ACTIONS["ABOUT"]:
+        st.switch_page("pages/1_About.py")
+    elif selected_action == ACTIONS["CREATE_DATABASE"]:
+        st.switch_page("pages/2_Database_Management.py")
+    elif selected_action == ACTIONS["CLONE_DATABASE"]:
+        st.switch_page("pages/2_Database_Management.py")
+    elif selected_action == ACTIONS["DELETE_DATABASE"]:
+        st.switch_page("pages/2_Database_Management.py")
+    elif selected_action == ACTIONS["CREATE_WAREHOUSE"]:
+        st.switch_page("pages/3_Warehouse_Management.py")
+    elif selected_action == ACTIONS["CREATE_ROLE"]:
+        st.switch_page("pages/4_Role_Management.py")
+    elif selected_action == ACTIONS["ASSIGN_ROLES"]:
+        st.switch_page("pages/4_Role_Management.py")
+    elif selected_action == ACTIONS["ASSIGN_DATABASE_ROLES"]:
+        st.switch_page("pages/4_Role_Management.py")
+    elif selected_action == ACTIONS["REVOKE_ROLES"]:
+        st.switch_page("pages/4_Role_Management.py")
+    elif selected_action == ACTIONS["CREATE_ENVIRONMENT_ROLES"]:
+        st.switch_page("pages/4_Role_Management.py")
+    elif selected_action == ACTIONS["SHOW_ROLE_HIERARCHY"]:
+        st.switch_page("pages/5_Role_Hierarchy.py")
+    elif selected_action == ACTIONS["DISPLAY_RBAC_ARCHITECTURE"]:
+        st.switch_page("pages/5_Role_Hierarchy.py")
+    elif selected_action == ACTIONS["MANAGE_METADATA"]:
+        st.switch_page("pages/6_Metadata_Management.py")
+    elif selected_action == ACTIONS["COST_ANALYSIS"]:
+        st.switch_page("pages/7_Cost_Analysis.py")
+    elif selected_action == ACTIONS["AUDIT_LOGS"]:
+        st.switch_page("pages/8_Audit_Logs.py")
     else:
         st.info("Select an action from the sidebar to get started.")
 
 if __name__ == "__main__":
-    main() 
+    main()
